@@ -22,20 +22,24 @@ ol{padding-left:20px;line-height:1.6;font-size:14px;margin:0 0 14px}
 <div id="entrada"><div class="card">
 <ol><li>No Copilot, clique no ícone de <b>copiar</b> do código.</li><li>Clique na caixa abaixo e aperte <b>Ctrl + V</b>. O report aparece sozinho.</li><li>Use os botões lá em cima para baixar o .html ou o PDF.</li></ol>
 <textarea id="txt" placeholder="Cole aqui (Ctrl + V)"></textarea>
-<div class="drop" id="drop">...ou arraste aqui o arquivo .html do report</div>
+<div class="drop" id="drop">...ou arraste aqui um report .html já salvo</div>
 <div id="msg"></div>
 <p class="priv">O report é montado só no seu navegador. Nenhum dado é enviado para a internet.</p>
 </div></div>
 <iframe id="vis" title="Status Report"></iframe>
 <script>
 var $=function(i){return document.getElementById(i)},H=null,NOME='Status_Report.html';
-function mostrar(s){s=s.replace(/^\uFEFF/,'').replace(/^```[a-z]*\s*/i,'').replace(/```\s*$/,'').trim();
-if(s.indexOf('window.DADOS')<0||s.indexOf('knd-status-report.js')<0){$('msg').innerHTML='<span class="err">Isto não parece um Status Report KND completo. Confira se copiou o código inteiro.</span>';return}
-var m=s.match(/window\.DADOS\s*=\s*(\{[\s\S]*\})\s*;\s*<\/script>/);
-if(!m){$('msg').innerHTML='<span class="err">Não achei o bloco de dados.</span>';return}
-try{var D=JSON.parse(m[1]),I=D.identificacao;NOME='Status_Report_'+I.cliente_arquivo+'_'+I.mes.charAt(0)+I.mes.slice(1).toLowerCase()+'_'+I.ano}catch(e){$('msg').innerHTML='<span class="err">O bloco de dados veio com erro de formato ('+e.message+'). Peça ao Copilot para gerar de novo.</span>';return}
-H=s;$('vis').srcdoc=s;$('entrada').style.display='none';$('vis').style.display='block';$('sub').textContent=NOME.replace(/_/g,' ');['nova','html','pdf'].forEach(function(i){$(i).disabled=false})}
-$('txt').addEventListener('input',function(){if(this.value.trim().length>200)mostrar(this.value)});
+var BASE=location.href.replace(/[#?].*$/,'').replace(/[^\/]*$/,'');
+function montarHTML(D){return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KND | Status Report</title>\n<!-- ===== DADOS DO MÊS: a única parte que muda ===== -->\n<script>\nwindow.DADOS = '+JSON.stringify(D,null,1)+';\n<'+'/script>\n<!-- ===== PARTE FIXA: copiar exatamente igual ===== -->\n<script src="'+BASE+'knd-status-report.js"><'+'/script>\n</head><body><main class="report" id="report"><div class="kndLoad">Carregando o relatório... Se esta mensagem não sumir, verifique a conexão com a internet.</div></main></body></html>\n'}
+function mostrar(s){s=s.replace(/^\uFEFF/,'').replace(/```[a-z]*/gi,'').trim();
+var a=s.indexOf('{'),b=s.lastIndexOf('}');
+if(a<0||b<a){$('msg').innerHTML='<span class="err">Não achei os dados do report. Confira se copiou o código inteiro.</span>';return}
+var D;try{D=JSON.parse(s.slice(a,b+1))}catch(e){$('msg').innerHTML='<span class="err">Os dados vieram com erro de formato ('+e.message+'). Copie de novo ou peça ao Copilot para gerar outra vez.</span>';return}
+if(D.DADOS)D=D.DADOS;
+if(!D.identificacao||!D.opr){$('msg').innerHTML='<span class="err">Isto não parece um Status Report KND. Confira se copiou o código certo.</span>';return}
+var I=D.identificacao;NOME='Status_Report_'+I.cliente_arquivo+'_'+I.mes.charAt(0)+I.mes.slice(1).toLowerCase()+'_'+I.ano;
+H=montarHTML(D);$('vis').srcdoc=H;$('entrada').style.display='none';$('vis').style.display='block';$('sub').textContent=NOME.replace(/_/g,' ');['nova','html','pdf'].forEach(function(i){$(i).disabled=false})}
+$('txt').addEventListener('input',function(){if(this.value.trim().length>100)mostrar(this.value)});
 var d=$('drop');['dragover','dragenter'].forEach(function(e){d.addEventListener(e,function(v){v.preventDefault();d.classList.add('on')})});
 ['dragleave','drop'].forEach(function(e){d.addEventListener(e,function(){d.classList.remove('on')})});
 d.addEventListener('drop',function(v){v.preventDefault();var f=v.dataTransfer.files[0];if(!f)return;var r=new FileReader();r.onload=function(){mostrar(r.result)};r.readAsText(f,'utf-8')});
