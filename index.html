@@ -1,0 +1,45 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KND | Ver Status Report</title>
+<style>
+:root{--navy:#082f5e;--blue:#2b8fc6;--ink:#10253e;--muted:#5d7188;--line:#dce6ef;--red:#bd4438;--green:#148055}
+*{box-sizing:border-box}body{margin:0;font-family:'Trebuchet MS',Arial,sans-serif;background:#eef3f7;color:var(--ink)}
+header{background:var(--navy);color:#fff;padding:18px 28px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+header h1{margin:0;font-size:20px}header p{margin:4px 0 0;color:#bfe3f5;font-size:13px}
+.acoes{display:flex;gap:8px;flex-wrap:wrap}
+button{padding:10px 16px;border:0;border-radius:8px;background:#fff;color:var(--navy);font:inherit;font-weight:700;font-size:14px;cursor:pointer}
+button.alt{background:var(--blue);color:#fff}button:disabled{opacity:.4;cursor:default}
+#entrada{max-width:900px;margin:30px auto;padding:0 20px}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:20px}
+textarea{width:100%;height:220px;font:12px monospace;border:1px solid #b9cbdb;border-radius:6px;padding:8px}
+.drop{border:2px dashed #b9cbdb;border-radius:8px;padding:18px;text-align:center;color:var(--muted);margin-top:12px;font-size:14px}
+.drop.on{border-color:var(--blue);background:#e6f4fb}
+#msg{margin-top:10px;font-size:14px}.err{color:var(--red)}.ok{color:var(--green)}
+ol{padding-left:20px;line-height:1.6;font-size:14px;margin:0 0 14px}
+#vis{display:none;width:100%;height:calc(100vh - 82px);border:0;background:#dfe8ef}
+.priv{font-size:12px;color:var(--muted);margin-top:12px}
+</style></head><body>
+<header><div><h1>Ver Status Report</h1><p id="sub">Cole o código que o Copilot gerou ou arraste o arquivo .html</p></div>
+<div class="acoes"><button id="nova" disabled>Outro report</button><button id="html" disabled>Baixar .html</button><button id="pdf" class="alt" disabled>Baixar PDF</button></div></header>
+<div id="entrada"><div class="card">
+<ol><li>No Copilot, clique no ícone de <b>copiar</b> do código.</li><li>Clique na caixa abaixo e aperte <b>Ctrl + V</b>. O report aparece sozinho.</li><li>Use os botões lá em cima para baixar o .html ou o PDF.</li></ol>
+<textarea id="txt" placeholder="Cole aqui (Ctrl + V)"></textarea>
+<div class="drop" id="drop">...ou arraste aqui o arquivo .html do report</div>
+<div id="msg"></div>
+<p class="priv">O report é montado só no seu navegador. Nenhum dado é enviado para a internet.</p>
+</div></div>
+<iframe id="vis" title="Status Report"></iframe>
+<script>
+var $=function(i){return document.getElementById(i)},H=null,NOME='Status_Report.html';
+function mostrar(s){s=s.replace(/^\uFEFF/,'').replace(/^```[a-z]*\s*/i,'').replace(/```\s*$/,'').trim();
+if(s.indexOf('window.DADOS')<0||s.indexOf('knd-status-report.js')<0){$('msg').innerHTML='<span class="err">Isto não parece um Status Report KND completo. Confira se copiou o código inteiro.</span>';return}
+var m=s.match(/window\.DADOS\s*=\s*(\{[\s\S]*\})\s*;\s*<\/script>/);
+if(!m){$('msg').innerHTML='<span class="err">Não achei o bloco de dados.</span>';return}
+try{var D=JSON.parse(m[1]),I=D.identificacao;NOME='Status_Report_'+I.cliente_arquivo+'_'+I.mes.charAt(0)+I.mes.slice(1).toLowerCase()+'_'+I.ano}catch(e){$('msg').innerHTML='<span class="err">O bloco de dados veio com erro de formato ('+e.message+'). Peça ao Copilot para gerar de novo.</span>';return}
+H=s;$('vis').srcdoc=s;$('entrada').style.display='none';$('vis').style.display='block';$('sub').textContent=NOME.replace(/_/g,' ');['nova','html','pdf'].forEach(function(i){$(i).disabled=false})}
+$('txt').addEventListener('input',function(){if(this.value.trim().length>200)mostrar(this.value)});
+var d=$('drop');['dragover','dragenter'].forEach(function(e){d.addEventListener(e,function(v){v.preventDefault();d.classList.add('on')})});
+['dragleave','drop'].forEach(function(e){d.addEventListener(e,function(){d.classList.remove('on')})});
+d.addEventListener('drop',function(v){v.preventDefault();var f=v.dataTransfer.files[0];if(!f)return;var r=new FileReader();r.onload=function(){mostrar(r.result)};r.readAsText(f,'utf-8')});
+$('html').onclick=function(){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([H],{type:'text/html'}));a.download=NOME+'.html';document.body.appendChild(a);a.click();a.remove()};
+$('pdf').onclick=function(){var t=document.title;document.title=NOME;$('vis').contentWindow.focus();$('vis').contentWindow.print();setTimeout(function(){document.title=t},1500)};
+$('nova').onclick=function(){location.reload()};
+</script></body></html>
