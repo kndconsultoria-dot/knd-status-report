@@ -15,29 +15,29 @@ textarea{width:100%;height:220px;font:12px monospace;border:1px solid #b9cbdb;bo
 #msg{margin-top:10px;font-size:14px}.err{color:var(--red)}.ok{color:var(--green)}
 ol{padding-left:20px;line-height:1.6;font-size:14px;margin:0 0 14px}
 #vis{display:none;width:100%;height:calc(100vh - 82px);border:0;background:#dfe8ef}
-.priv{font-size:12px;color:var(--muted);margin-top:12px}
+.modelos{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}.mod{text-align:left;background:#fff;border:2px solid #dce6ef;border-radius:10px;padding:16px;color:#10253e}.mod b{display:block;font-size:16px;color:#082f5e}.mod span{display:block;font-size:13px;color:#5d7188;margin-top:4px;font-weight:400}.mod.sel{border-color:#2b8fc6;background:#e6f4fb}.priv{font-size:12px;color:var(--muted);margin-top:12px}
 </style></head><body>
-<header><div><h1>Ver Status Report</h1><p id="sub">Cole o código que o Copilot gerou ou arraste o arquivo .html</p></div>
+<header><div><h1>Ver Status Report</h1><p id="sub">1. Escolha o modelo · 2. Cole o código que o Copilot gerou</p></div>
 <div class="acoes"><button id="nova" disabled>Outro report</button><button id="html" disabled>Baixar .html</button><button id="pdf" class="alt" disabled>Baixar PDF</button></div></header>
-<div id="entrada"><div class="card">
+<div id="entrada"><div class="modelos"><button class="mod" data-m="opr"><b>Status Report OPR + FCA</b><span>Financeiro, projetos e FCAs dos gestores</span></button><button class="mod" data-m="entregas"><b>Status Report de Entregas KND</b><span>Planner, atendimentos (RAC) e carga horária</span></button></div><div class="card" id="cardCola" style="display:none"><p id="modTxt" style="margin:0 0 10px;font-weight:700;color:#082f5e"></p>
 <ol><li>No Copilot, clique no ícone de <b>copiar</b> do código.</li><li>Clique na caixa abaixo e aperte <b>Ctrl + V</b>. O report aparece sozinho.</li><li>Use os botões lá em cima para baixar o .html ou o PDF.</li></ol>
 <textarea id="txt" placeholder="Cole aqui (Ctrl + V)"></textarea>
 <div class="drop" id="drop">...ou arraste aqui um report .html já salvo</div>
 <div id="msg"></div>
-<p class="priv">O report é montado só no seu navegador. Nenhum dado é enviado para a internet.</p>
+<p class="priv"><a href="criar.html">Cliente novo? Criar template →</a><br>O report é montado só no seu navegador. Nenhum dado é enviado para a internet.</p>
 </div></div>
 <iframe id="vis" title="Status Report"></iframe>
 <script>
-var $=function(i){return document.getElementById(i)},H=null,NOME='Status_Report.html';
+var $=function(i){return document.getElementById(i)},H=null,NOME='Status_Report.html',MODELO=null;
 var BASE=location.href.replace(/[#?].*$/,'').replace(/[^\/]*$/,'');
-function montarHTML(D){return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KND | Status Report</title>\n<!-- ===== DADOS DO MÊS: a única parte que muda ===== -->\n<script>\nwindow.DADOS = '+JSON.stringify(D,null,1)+';\n<'+'/script>\n<!-- ===== PARTE FIXA: copiar exatamente igual ===== -->\n<script src="'+BASE+'knd-status-report.js"><'+'/script>\n</head><body><main class="report" id="report"><div class="kndLoad">Carregando o relatório... Se esta mensagem não sumir, verifique a conexão com a internet.</div></main></body></html>\n'}
+function montarHTML(D){var JS=D.tipo==='entregas'?'knd-entregas.js':'knd-status-report.js';return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KND | Status Report</title>\n<!-- ===== DADOS DO MÊS: a única parte que muda ===== -->\n<script>\nwindow.DADOS = '+JSON.stringify(D,null,1)+';\n<'+'/script>\n<!-- ===== PARTE FIXA: copiar exatamente igual ===== -->\n<script src="'+BASE+JS+'"><'+'/script>\n</head><body><main class="report" id="report"><div class="kndLoad">Carregando o relatório... Se esta mensagem não sumir, verifique a conexão com a internet.</div></main></body></html>\n'}
 function mostrar(s){s=s.replace(/^\uFEFF/,'').replace(/```[a-z]*/gi,'').trim();
 var a=s.indexOf('{'),b=s.lastIndexOf('}');
 if(a<0||b<a){$('msg').innerHTML='<span class="err">Não achei os dados do report. Confira se copiou o código inteiro.</span>';return}
 var D;try{D=JSON.parse(s.slice(a,b+1))}catch(e){$('msg').innerHTML='<span class="err">Os dados vieram com erro de formato ('+e.message+'). Copie de novo ou peça ao Copilot para gerar outra vez.</span>';return}
 if(D.DADOS)D=D.DADOS;
-if(!D.identificacao||!D.opr){$('msg').innerHTML='<span class="err">Isto não parece um Status Report KND. Confira se copiou o código certo.</span>';return}
-var I=D.identificacao;NOME='Status_Report_'+I.cliente_arquivo+'_'+I.mes.charAt(0)+I.mes.slice(1).toLowerCase()+'_'+I.ano;
+if(!D.identificacao||(!D.opr&&D.tipo!=='entregas')){$('msg').innerHTML='<span class="err">Isto não parece um Status Report KND. Confira se copiou o código certo.</span>';return}
+var I=D.identificacao,ENT=D.tipo==='entregas';if(MODELO&&MODELO!==(ENT?'entregas':'opr')){$('msg').innerHTML='<span class="err">Este código é do modelo '+(ENT?'Entregas KND':'OPR + FCA')+'. Selecione o modelo certo acima ou cole o código correspondente.</span>';return}NOME='Status_Report_'+(ENT?'Entregas_':'')+I.cliente_arquivo+'_'+I.mes.charAt(0)+I.mes.slice(1).toLowerCase()+'_'+I.ano;
 H=montarHTML(D);$('vis').srcdoc=H;$('entrada').style.display='none';$('vis').style.display='block';$('sub').textContent=NOME.replace(/_/g,' ');['nova','html','pdf'].forEach(function(i){$(i).disabled=false})}
 $('txt').addEventListener('input',function(){if(this.value.trim().length>100)mostrar(this.value)});
 var d=$('drop');['dragover','dragenter'].forEach(function(e){d.addEventListener(e,function(v){v.preventDefault();d.classList.add('on')})});
@@ -46,4 +46,5 @@ d.addEventListener('drop',function(v){v.preventDefault();var f=v.dataTransfer.fi
 $('html').onclick=function(){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([H],{type:'text/html'}));a.download=NOME+'.html';document.body.appendChild(a);a.click();a.remove()};
 $('pdf').onclick=function(){var t=document.title;document.title=NOME;$('vis').contentWindow.focus();$('vis').contentWindow.print();setTimeout(function(){document.title=t},1500)};
 $('nova').onclick=function(){location.reload()};
+document.querySelectorAll('.mod').forEach(function(b){b.onclick=function(){MODELO=b.dataset.m;document.querySelectorAll('.mod').forEach(function(x){x.classList.toggle('sel',x===b)});$('cardCola').style.display='block';$('modTxt').textContent='Modelo escolhido: '+b.querySelector('b').textContent;$('msg').innerHTML='';$('txt').focus()}});
 </script></body></html>
