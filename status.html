@@ -1,0 +1,67 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KND | Status Report</title>
+<script>
+/* ===== CONFIGURAÇÃO (só a Natalia mexe aqui) =====
+   Cole entre as aspas o link de compartilhamento de cada agente do Copilot. */
+var AGENTE_OPR      = "";   // agente: KND Executive Status Report
+var AGENTE_ENTREGAS = "";   // agente: KND Entregas Mensal
+</script>
+<style>
+:root{--navy:#082f5e;--blue:#2b8fc6;--ink:#10253e;--muted:#5d7188;--line:#dce6ef}
+*{box-sizing:border-box}body{margin:0;font-family:'Trebuchet MS',Arial,sans-serif;background:#eef3f7;color:var(--ink)}
+header{background:var(--navy);color:#fff;padding:22px 28px}
+header h1{margin:0;font-size:22px}header p{margin:6px 0 0;color:#bfe3f5;font-size:14px}
+main{max-width:920px;margin:32px auto;padding:0 20px}
+.op{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:700px){.op{grid-template-columns:1fr}}
+a.mod{display:flex;flex-direction:column;background:#fff;border:2px solid var(--line);border-radius:12px;padding:22px;text-decoration:none;color:var(--ink)}
+a.mod:hover{border-color:var(--blue);background:#f4fafd}
+.mod h2{margin:0;font-size:19px;color:var(--navy)}
+.mod p{margin:6px 0 14px;font-size:14px;color:var(--muted);line-height:1.45}
+.mod h3{margin:0 0 6px;font-size:13px;color:var(--navy)}
+.mod ul{margin:0 0 18px;padding-left:18px;font-size:13px;line-height:1.6}
+.mod .ir{margin-top:auto;align-self:flex-start;background:var(--navy);color:#fff;font-weight:700;font-size:14px;padding:10px 16px;border-radius:8px}
+.passos{margin-top:26px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 22px}
+.passos h2{margin:0 0 8px;font-size:16px;color:var(--navy)}
+.passos ol{margin:0;padding-left:20px;font-size:14px;line-height:1.7}
+.colar{display:inline-block;margin-top:14px;color:var(--blue);font-weight:700;text-decoration:none}
+#aviso{display:none;margin-top:18px;background:#fff7e6;border:1px solid #f0c36d;border-radius:8px;padding:12px;font-size:14px}
+</style></head><body>
+<header><h1>Status Report do mês</h1><p>Escolha o modelo. O agente certo do Copilot abre em uma nova guia.</p></header>
+<main>
+<div class="op">
+ <a class="mod" id="opr" href="#" target="_blank" rel="noopener">
+  <h2>Status Report OPR + FCA</h2>
+  <p>Resultado financeiro do mês, projetos e controle dos FCAs dos gestores.</p>
+  <h3>Tenha em mãos</h3>
+  <ul><li>Template .html do cliente (mês anterior)</li><li>OPR (.xlsx)</li><li>Apresentação com os FCAs (.pptx)</li><li>Cronograma (.xlsx) e narração do mês</li></ul>
+  <span class="ir">Abrir agente OPR + FCA ↗</span>
+ </a>
+ <a class="mod" id="ent" href="#" target="_blank" rel="noopener">
+  <h2>Entregas Mensal KND</h2>
+  <p>Tarefas do Planner, atendimentos registrados na RAC e carga horária do mês.</p>
+  <h3>Tenha em mãos</h3>
+  <ul><li>Template .html do cliente (mês anterior)</li><li>Export do Planner (.xlsx)</li><li>RAC do mês (.xlsx)</li><li>Narração do mês</li></ul>
+  <span class="ir">Abrir agente Entregas ↗</span>
+ </a>
+</div>
+<div id="aviso"></div>
+<div class="passos">
+ <h2>Na conversa do agente</h2>
+ <ol>
+  <li>Comece uma conversa nova e apague o texto que vier na caixa.</li>
+  <li>Anexe o template do cliente e até 2 arquivos (o Copilot aceita 3 por vez). Escreva <b>arquivos</b> e envie.</li>
+  <li>Anexe o restante ou cole a narração e envie.</li>
+  <li>Clique no prompt <b>GERAR</b>, troque <b>__</b> pelas horas do mês e envie.</li>
+  <li>Copie o código e use o link abaixo para colar.</li>
+ </ol>
+ <a class="colar" href="./">Já tenho o código → colar e baixar o PDF</a>
+</div>
+</main>
+<script>
+function ligar(id,url,nome){var a=document.getElementById(id);
+ if(url){a.href=url;return}
+ a.onclick=function(e){e.preventDefault();var v=document.getElementById('aviso');v.style.display='block';
+  v.innerHTML='O link do agente <b>'+nome+'</b> ainda não foi configurado. Avise a administradora.'}}
+ligar('opr',AGENTE_OPR,'OPR + FCA');ligar('ent',AGENTE_ENTREGAS,'Entregas Mensal');
+</script>
+</body></html>
