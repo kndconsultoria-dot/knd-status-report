@@ -14,7 +14,7 @@ button{width:100%;padding:11px;border:0;border-radius:8px;background:var(--navy)
 iframe{width:100%;height:700px;border:1px solid var(--line);border-radius:8px;background:#fff}
 @media(max-width:950px){main{grid-template-columns:1fr}}
 </style></head><body>
-<header><div><h1>Cliente novo · criar template</h1><p>Use uma vez por cliente e por modelo. Nada é enviado para a internet.</p></div><a href="./">← Voltar para Ver Status Report</a></header>
+<header><div><h1>Cliente novo · criar template</h1><p>Use uma vez por cliente. O logo fica salvo no seu navegador; nada é enviado para a internet.</p></div><a href="./">← Voltar para Ver Status Report</a></header>
 <main><div class="card">
 <div class="step"><span class="n">1</span><div style="flex:1"><label>Modelo</label><select id="mod"><option value="opr">Status Report OPR + FCA</option><option value="entregas">Status Report de Entregas KND</option></select></div></div>
 <div class="step"><span class="n">2</span><div style="flex:1"><label>Nome do cliente no relatório</label><small>Como aparece na capa. Ex.: Biofarm · Farmavet · NMR Vet</small><input id="cliente"></div></div>
@@ -23,8 +23,8 @@ iframe{width:100%;height:700px;border:1px solid var(--line);border-radius:8px;ba
 <div class="step"><span class="n">5</span><div style="flex:1"><label>Mês e ano do primeiro report</label><div class="row"><select id="mes"></select><input id="ano" value="2026"></div></div></div>
 <div class="step"><span class="n">6</span><div style="flex:1"><label>Logo do cliente</label><small>PNG ou JPG, de preferência com fundo branco ou transparente.</small><input type="file" id="logo" accept="image/*"><div id="logoPrev">sem logo</div></div></div>
 <button id="ver" disabled>Ver prévia</button>
-<button id="bLogo" class="sec" disabled>Baixar logo (para o GitHub)</button>
-<button id="bTpl" class="sec" disabled>Baixar template</button>
+<button id="bTpl" class="sec" disabled>Salvar logo e baixar template</button>
+<p style="font-size:12px;margin:10px 0 0"><a href="#" id="bLogo" style="color:#5d7188">Administrador: baixar logo para o GitHub (opcional)</a></p>
 <div class="final" id="final"></div></div>
 <div class="card"><iframe id="prev" title="Prévia"></iframe></div></main>
 <script>
@@ -33,7 +33,7 @@ var MESES=['JANEIRO','FEVEREIRO','MARÇO','ABRIL','MAIO','JUNHO','JULHO','AGOSTO
 MESES.forEach(function(m,i){var o=document.createElement('option');o.value=m;o.textContent=m.charAt(0)+m.slice(1).toLowerCase();if(i===new Date().getMonth())o.selected=true;$('mes').appendChild(o)});
 function cap(s){return s.charAt(0)+s.slice(1).toLowerCase()}
 function slug(){return $('curto').value.trim()}
-function ok(){var v=$('cliente').value.trim()&&slug()&&$('crono').value.trim()&&LOGO;['ver','bLogo','bTpl'].forEach(function(i){$(i).disabled=!v})}
+function ok(){var v=$('cliente').value.trim()&&slug()&&$('crono').value.trim()&&LOGO;['ver','bTpl'].forEach(function(i){$(i).disabled=!v})}
 ['cliente','curto','crono','ano','mes','mod'].forEach(function(i){$(i).addEventListener('input',ok)});
 $('curto').addEventListener('input',function(){this.value=this.value.replace(/[^A-Za-z0-9_-]/g,'')});
 $('logo').onchange=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var h=120,w=Math.round(im.width*h/im.height);if(w>480){w=480;h=Math.round(im.height*w/im.width)}var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(im,0,0,w,h);LOGO=c.toDataURL('image/png');$('logoPrev').innerHTML='<img src="'+LOGO+'">';ok()};im.src=r.result};r.readAsDataURL(f)};
@@ -45,7 +45,7 @@ function html(d){var JS=d.tipo==='entregas'?'knd-entregas.js':'knd-status-report
 return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KND | Status Report</title>\n<!-- ===== DADOS DO MÊS: a única parte que muda ===== -->\n<script>\nwindow.DADOS = '+JSON.stringify(d,null,1)+';\n'+E+'\n<!-- ===== PARTE FIXA: copiar exatamente igual ===== -->\n<script src="'+BASE+JS+'">'+E+'\n</head><body><main class="report" id="report"><div class="kndLoad">Carregando o relatório... Se esta mensagem não sumir, verifique a conexão com a internet.</div></main></body></html>\n'}
 function baixar(conteudo,nome,tipo){var a=document.createElement('a');a.href=typeof conteudo==='string'&&conteudo.indexOf('data:')===0?conteudo:URL.createObjectURL(new Blob([conteudo],{type:tipo}));a.download=nome;document.body.appendChild(a);a.click();a.remove()}
 $('ver').onclick=function(){$('prev').srcdoc=html(dados(LOGO)).replace('</head>','<style>html{zoom:.55}</style></head>')};
-$('bLogo').onclick=function(){baixar(LOGO,slug().toLowerCase()+'.png');mostrarFinal()};
-$('bTpl').onclick=function(){var m=$('mod').value;baixar(html(dados(slug().toLowerCase()+'.png')),'Status_Report_'+(m==='entregas'?'Entregas_':'')+slug()+'_TEMPLATE.html','text/html');mostrarFinal()};
-function mostrarFinal(){var f=$('final');f.style.display='block';f.innerHTML='<b>Falta 1 passo:</b> no GitHub, abra a pasta <b>logos</b> → <b>Add file</b> → <b>Upload files</b> → arraste <b>'+slug().toLowerCase()+'.png</b> → <b>Commit changes</b>. Sem isso, o logo do cliente não aparece no report.<br><br>Guarde o template na pasta do cliente no SharePoint e use-o no primeiro mês.'}
+$('bLogo').onclick=function(e){e.preventDefault();if(LOGO)baixar(LOGO,slug().toLowerCase()+'.png')};
+$('bTpl').onclick=function(){try{localStorage.setItem('knd-logo-'+slug().toLowerCase()+'.png',LOGO)}catch(e){}var m=$('mod').value;baixar(html(dados(slug().toLowerCase()+'.png')),'Status_Report_'+(m==='entregas'?'Entregas_':'')+slug()+'_TEMPLATE.html','text/html');mostrarFinal()};
+function mostrarFinal(){var f=$('final');f.style.display='block';f.innerHTML='<b>Pronto!</b> O logo ficou salvo neste computador e o template foi baixado.<br><br>Guarde o template na pasta do cliente no SharePoint e use-o no primeiro mês, no agente.<br><br>Se outro consultor gerar o report deste cliente em outro computador, o site vai pedir o logo uma única vez.'}
 </script></body></html>
