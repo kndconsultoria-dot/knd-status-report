@@ -19,7 +19,7 @@ ol{padding-left:20px;line-height:1.6;font-size:14px;margin:0 0 14px}
 </style></head><body>
 <header><div><h1>Ver Status Report</h1><p id="sub">Cole o código que o Copilot gerou</p></div>
 <div class="acoes"><button id="nova" disabled>Outro report</button><button id="html" disabled>Baixar .html</button><button id="pdf" class="alt" disabled>Baixar PDF</button></div></header>
-<div id="entrada"><div class="card" id="cardCola"><p style="margin:0 0 10px;font-weight:700;color:#082f5e">Serve para os dois modelos (OPR + FCA e Entregas KND). O site reconhece sozinho.</p>
+<div id="entrada"><div class="card" id="cardCola"><p style="margin:0 0 10px;font-weight:700;color:#082f5e">Serve para os dois modelos (KND Executive Status Report e KND Status Report Entregas Mês). O site reconhece sozinho.</p>
 <ol><li>No Copilot, clique no ícone de <b>copiar</b> do código.</li><li>Clique na caixa abaixo e aperte <b>Ctrl + V</b>. O report aparece sozinho.</li><li>Use os botões lá em cima para baixar o .html ou o PDF.</li></ol>
 <textarea id="txt" placeholder="Cole aqui (Ctrl + V)"></textarea>
 <div class="drop" id="drop">...ou arraste aqui um report .html já salvo</div>
@@ -49,7 +49,7 @@ var D;try{D=JSON.parse(s.slice(a,b+1))}catch(e){$('msg').innerHTML='<span class=
 if(D.DADOS)D=D.DADOS;
 if(!D.identificacao||(!D.opr&&D.tipo!=='entregas')){$('msg').innerHTML='<span class="err">Isto não parece um Status Report KND. Confira se copiou o código certo.</span>';return}
 var I=D.identificacao,ENT=D.tipo==='entregas';NOME='Status_Report_'+(ENT?'Entregas_':'')+I.cliente_arquivo+'_'+I.mes.charAt(0)+I.mes.slice(1).toLowerCase()+'_'+I.ano;
-H=montarHTML(D);resolverLogo(D,function(DV){$('vis').srcdoc=montarHTML(DV);$('entrada').style.display='none';$('vis').style.display='block';$('sub').textContent=(ENT?'Entregas KND':'OPR + FCA')+' · '+NOME.replace(/_/g,' ').replace(/^Status Report (Entregas )?/,'');['nova','html','pdf'].forEach(function(i){$(i).disabled=false})})}
+H=montarHTML(D);resolverLogo(D,function(DV){$('vis').srcdoc=montarHTML(DV);$('entrada').style.display='none';$('vis').style.display='block';$('sub').textContent=(ENT?'KND Status Report Entregas Mês':'KND Executive Status Report')+' · '+NOME.replace(/_/g,' ').replace(/^Status Report (Entregas )?/,'');['nova','html','pdf'].forEach(function(i){$(i).disabled=false})})}
 $('txt').addEventListener('input',function(){if(this.value.trim().length>100)mostrar(this.value)});
 var d=$('drop');['dragover','dragenter'].forEach(function(e){d.addEventListener(e,function(v){v.preventDefault();d.classList.add('on')})});
 ['dragleave','drop'].forEach(function(e){d.addEventListener(e,function(){d.classList.remove('on')})});

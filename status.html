@@ -3,7 +3,7 @@
 /* ===== CONFIGURAÇÃO (só a Natalia mexe aqui) =====
    Cole entre as aspas o link de compartilhamento de cada agente do Copilot. */
 var AGENTE_OPR      = "https://m365.cloud.microsoft/chat/?titleId=T_beee39a6-307e-ae96-1f6e-ef2700e7ef00&source=embedded-builder";   // agente: KND Executive Status Report
-var AGENTE_ENTREGAS = "https://m365.cloud.microsoft/chat/?titleId=T_e2991b1e-1e59-2f85-0601-16edcc9636b3&source=embedded-builder";   // agente: KND Entregas Mensal
+var AGENTE_ENTREGAS = "https://m365.cloud.microsoft/chat/?titleId=T_e2991b1e-1e59-2f85-0601-16edcc9636b3&source=embedded-builder";   // agente: KND Status Report Entregas Mês
 </script>
 <style>
 :root{--navy:#082f5e;--blue:#2b8fc6;--ink:#10253e;--muted:#5d7188;--line:#dce6ef}
@@ -30,18 +30,18 @@ a.mod:hover{border-color:var(--blue);background:#f4fafd}
 <main>
 <div class="op">
  <a class="mod" id="opr" href="#" target="_blank" rel="noopener">
-  <h2>Status Report OPR + FCA</h2>
+  <h2>KND Executive Status Report</h2>
   <p>Resultado financeiro do mês, projetos e controle dos FCAs dos gestores.</p>
   <h3>Tenha em mãos</h3>
   <ul><li>Template .html do cliente (mês anterior)</li><li>OPR (.xlsx)</li><li>Apresentação com os FCAs (.pptx)</li><li>Cronograma (.xlsx) e narração do mês</li></ul>
-  <span class="ir">Abrir agente OPR + FCA ↗</span>
+  <span class="ir">Abrir KND Executive Status Report ↗</span>
  </a>
  <a class="mod" id="ent" href="#" target="_blank" rel="noopener">
-  <h2>Entregas Mensal KND</h2>
+  <h2>KND Status Report Entregas Mês</h2>
   <p>Tarefas do Planner, atendimentos registrados na RAC e carga horária do mês.</p>
   <h3>Tenha em mãos</h3>
   <ul><li>Template .html do cliente (mês anterior)</li><li>Export do Planner (.xlsx)</li><li>RAC do mês (.xlsx)</li><li>Narração do mês</li></ul>
-  <span class="ir">Abrir agente Entregas ↗</span>
+  <span class="ir">Abrir KND Status Report Entregas Mês ↗</span>
  </a>
 </div>
 <div id="aviso"></div>
@@ -62,6 +62,6 @@ function ligar(id,url,nome){var a=document.getElementById(id);
  if(url){a.href=url;return}
  a.onclick=function(e){e.preventDefault();var v=document.getElementById('aviso');v.style.display='block';
   v.innerHTML='O link do agente <b>'+nome+'</b> ainda não foi configurado. Avise a administradora.'}}
-ligar('opr',AGENTE_OPR,'OPR + FCA');ligar('ent',AGENTE_ENTREGAS,'Entregas Mensal');
+ligar('opr',AGENTE_OPR,'KND Executive Status Report');ligar('ent',AGENTE_ENTREGAS,'KND Status Report Entregas Mês');
 </script>
 </body></html>

@@ -1,7 +1,7 @@
 <!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KND | Cliente novo</title>
 <style>
 :root{--navy:#082f5e;--blue:#2b8fc6;--ink:#10253e;--muted:#5d7188;--line:#dce6ef}
-*{box-sizing:border-box}body{margin:0;font-family:Calibri,Carlito,Arial,sans-serif;background:#eef3f7;color:var(--ink)}
+*{box-sizing:border-box}body{margin:0;font-family:'Trebuchet MS',Arial,sans-serif;background:#eef3f7;color:var(--ink)}
 header{background:var(--navy);color:#fff;padding:18px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}header h1{margin:0;font-size:20px}header p{margin:4px 0 0;color:#bfe3f5;font-size:13px}header a{color:#fff;font-size:14px}
 main{max-width:1200px;margin:22px auto;padding:0 20px;display:grid;grid-template-columns:390px 1fr;gap:20px}
 .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px}
@@ -16,7 +16,7 @@ iframe{width:100%;height:700px;border:1px solid var(--line);border-radius:8px;ba
 </style></head><body>
 <header><div><h1>Cliente novo · criar template</h1><p>Use uma vez por cliente. O logo fica salvo no seu navegador; nada é enviado para a internet.</p></div></header>
 <main><div class="card">
-<div class="step"><span class="n">1</span><div style="flex:1"><label>Modelo</label><select id="mod"><option value="opr">Status Report OPR + FCA</option><option value="entregas">Status Report de Entregas KND</option></select></div></div>
+<div class="step"><span class="n">1</span><div style="flex:1"><label>Modelo</label><select id="mod"><option value="opr">KND Executive Status Report</option><option value="entregas">KND Status Report Entregas Mês</option></select></div></div>
 <div class="step"><span class="n">2</span><div style="flex:1"><label>Nome do cliente no relatório</label><small>Como aparece na capa. Ex.: Empresa ABC · Unidade Sul</small><input id="cliente"></div></div>
 <div class="step"><span class="n">3</span><div style="flex:1"><label>Nome curto</label><small>Sem espaços. Vira o nome dos arquivos e do logo. Ex.: EmpresaABC</small><input id="curto"></div></div>
 <div class="step"><span class="n">4</span><div style="flex:1"><label>Nome igual ao do Cronograma</label><small>Exatamente como está na coluna A do Cronograma.</small><input id="crono"></div></div>
